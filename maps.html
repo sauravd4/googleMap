@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <script async="async" defer="defer"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWw_9bohYhOjza4MQ1rBV1CW6BxfERiOQ&callback=initMap">
+    </script>
+</head>
+<body>
+
+
+    <script>
+        $(window).on('load', function () {
+            getLocation();
+        });
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            }
+        }
+
+        function showPosition(position) {
+            sessionStorage.lat = position.coords.latitude;
+            sessionStorage.long = position.coords.longitude;
+            sessionStorage.location = "true";
+            var lat = sessionStorage.lat;
+            var lng = sessionStorage.long;
+            var latlng = new google.maps.LatLng(lat, lng);
+            var geocoder = geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+                        var address = results[0].formatted_address;
+                        var split = address.split(",");
+                        $(".Address").val($.trim(split[1] + "," + split[2] + "," + split[3]));
+                    }
+                }
+            });
+            $(".latitude").val(lat);
+            $(".longitude").val(lng);
+
+        }
+
+        function showError(error) {
+            var x = $('.errorMsg');
+            x.show();
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    x.text("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    x.text("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    x.text("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    x.text("An unknown error occurred.");
+                    break;
+            }
+        }
+    </script>
+
+    <h2 style="text-align:center">Get location</h2>
+    <div class="errorMsg alert alert-danger" hidden style="text-align:center;max-width:400px;margin:auto;"></div>
+    <style>
+        table tr td {
+            padding : 10px;
+        }
+    </style>
+    <div style="width:300px;margin:auto">
+        <table>
+            <tr>
+                <td>
+                    Address - 
+                </td>
+                <td>
+                    <input type="text" style="font-size: 16px" class="Address" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    latitude -
+                </td>
+                <td>
+                    <input type="text" style="font-size: 16px" class="latitude" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    longitude -
+                </td>
+                <td>
+                    <input type="text" style="font-size: 16px" class="longitude" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>
